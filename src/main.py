@@ -3,16 +3,27 @@
 # Winter 2017 - ECS 240 - Zhendong Su
 
 #Standard Libraries
+import sys
+import os
 
 #3rd Party Libraries
 
 #Local Libraries
-import undeclared_local_variable
-import overriding_declared_variable
+import io_utils.py
+import dirent_utils
+import variable_tree
 
 
 def main():
-	pass
+	# 
+	if len(sys.argv) < 2:
+		io_utils.usage("python main.py <source file>", terminate = True)
+
+	# Make sure the input file is python
+	if(dirent_utils.get_file_basename_extension(sys.argv[1])[1] != ".py"):
+		io_utils.usage("python main.py <source file>", terminate = True)
+
+	tree = variable_tree.Variable_Tree(sys.argv[1])
 
 
 if __name__ == "__main__":
