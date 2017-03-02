@@ -9,9 +9,9 @@ import os
 #3rd Party Libraries
 
 #Local Libraries
-import io_utils.py
+import io_utils
 import dirent_utils
-import variable_tree
+import variable_table
 
 
 def main():
@@ -23,7 +23,7 @@ def main():
 	if(dirent_utils.get_file_basename_extension(sys.argv[1])[1] != ".py"):
 		io_utils.usage("python main.py <source file>", terminate = True)
 
-	tree = variable_tree.Variable_Tree(sys.argv[1])
+	vtable = variable_table.Variable_Table(sys.argv[1])
 
 
 if __name__ == "__main__":
