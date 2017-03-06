@@ -1,7 +1,7 @@
 import re
 
-line = "\t\t\tif(index < argc):\n"
-reg = re.compile(r'([ \t]*)if[ \t\(]*(.*)[\)]*:\n$')
+line = "for i in range(1, 10):\n"
+reg = re.compile(r'([ \t]*)for[ \t\(]*(.*)[ \t]*in[ \t]*(.*)[\)]*:\n$')
 matcher = re.match(reg, line)
 
 if(matcher):
