@@ -6,6 +6,7 @@
 import re
 
 #3rd Party Libraries
+from enum import Enum
 
 #Local Libraries
 import undeclared_local_variable
@@ -13,11 +14,16 @@ import overriding_declared_variable
 import global_local_variable_confusion
 import function_parameter_overridden
 
+class Operation(Enum):
+    READ = 0
+    WRITE = 1
+    ASSIGN = 2
+
 
 class Variable_Table:
 	def __init__(self, source_code_filepath):
 		# Dict for variable table
-		self.variable_table = {}
+		self.variable_table = []
 		self.parse_code(source_code_filepath)
 
 	def parse_code(self, source_code_filepath):
@@ -35,53 +41,55 @@ class Variable_Table:
 				matcher = re.match(r'[ \t]*def ([A-Za-z0-9]+)(\(([A-Za-z0-9]*(,[ \t]*[A-Za-z0-9]+)*)\)):\n$', line)
 				if(matcher):
 					function_name = matcher.groups()[0]
-					function_args = re.sub(r' ', '', str(matcher.groups()[2])).split(',') if(matcher.groups()[2]) else []
-					print("def", function_name, function_args)
+					# break the function arguements string into list of variable names
+					variables = re.sub(r' ', '', str(matcher.groups()[2])).split(',') if(matcher.groups()[2]) else []
+					# construct line element by variables
+					self.variable_table.append([(variable_name, Operation.ASSIGN) for variable_name in variables])
 					continue
 				
 				# Variable assignment
-				matcher = re.match(r'([ \t]*)(.*)[ \t]*=[ \t]*(.*)\n$', line)
-				if(matcher):
-					indention = matcher.groups()[0].count('\t')
-					result_variables = re.sub(r' ', '', matcher.groups()[1]).split(',')
-					expression = matcher.groups()[2]
-					print("Assign", indention, result_variables, expression)
-					continue
+				# matcher = re.match(r'([ \t]*)(.*)[ \t]*=[ \t]*(.*)\n$', line)
+				# if(matcher):
+				# 	indention = matcher.groups()[0].count('\t')
+				# 	result_variables = re.sub(r' ', '', matcher.groups()[1]).split(',')
+				# 	expression = matcher.groups()[2]
+				# 	print("Assign", indention, result_variables, expression)
+				# 	continue
 
-				# While loop
-				matcher = re.match(r'([ \t]*)while[ \t\()]*(.*)[\)]*:\n$', line)
-				if(matcher):
-					indention = matcher.groups()[0].count('\t')
-					expression = matcher.groups()[1]
-					print("while", indention, expression)
-					continue
+				# # While loop
+				# matcher = re.match(r'([ \t]*)while[ \t\()]*(.*)[\)]*:\n$', line)
+				# if(matcher):
+				# 	indention = matcher.groups()[0].count('\t')
+				# 	expression = matcher.groups()[1]
+				# 	print("while", indention, expression)
+				# 	continue
 
-				# For loop
-				matcher = re.match(r'([ \t]*)for[ \t\(]*([_A-Za-z0-9]+)[ \t]*in[ \t]*(.*)[\)]*:\n$', line)
-				if(matcher):
-					indention = matcher.groups()[0].count('\t')
-					expression = re.sub(r'\)', '', matcher.groups()[1])
-					print("for", indention, expression)
-					continue
+				# # For loop
+				# matcher = re.match(r'([ \t]*)for[ \t\(]*([_A-Za-z0-9]+)[ \t]*in[ \t]*(.*)[\)]*:\n$', line)
+				# if(matcher):
+				# 	indention = matcher.groups()[0].count('\t')
+				# 	expression = re.sub(r'\)', '', matcher.groups()[1])
+				# 	print("for", indention, expression)
+				# 	continue
 
-				# If
-				matcher = re.match(r'([ \t]*)if[ \t\(]*(.*)[\)]*:\n$', line)
-				if(matcher):
-					indention = matcher.groups()[0].count('\t')
-					expression = re.sub(r'\)', '', matcher.groups()[1])
-					print("if", indention, expression)
-					continue
+				# # If
+				# matcher = re.match(r'([ \t]*)if[ \t\(]*(.*)[\)]*:\n$', line)
+				# if(matcher):
+				# 	indention = matcher.groups()[0].count('\t')
+				# 	expression = re.sub(r'\)', '', matcher.groups()[1])
+				# 	print("if", indention, expression)
+				# 	continue
 
-				# With Statement
-				matcher = re.match(r'([ \t]*)with[ \t]*(.*) as[ \t]*([A-Za-z0-9]+):\n$', line)
-				if(matcher):
-					indention = matcher.groups()[0].count('\t')
-					expression = matcher.groups()[1]
-					variable_name = matcher.groups()[2]
-					print("with",indention, expression, variable_name)
-					continue
+				# # With Statement
+				# matcher = re.match(r'([ \t]*)with[ \t]*(.*) as[ \t]*([A-Za-z0-9]+):\n$', line)
+				# if(matcher):
+				# 	indention = matcher.groups()[0].count('\t')
+				# 	expression = matcher.groups()[1]
+				# 	variable_name = matcher.groups()[2]
+				# 	print("with",indention, expression, variable_name)
+				# 	continue
 
-				print(repr(line))
+				# print(repr(line))
 
 
 
