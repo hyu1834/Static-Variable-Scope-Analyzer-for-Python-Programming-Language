@@ -12,6 +12,7 @@ import os
 import io_utils
 import dirent_utils
 import variable_table
+import undeclared_local_variable
 
 
 def main():
@@ -24,6 +25,10 @@ def main():
 		io_utils.usage("python main.py <source file>", terminate = True)
 
 	vtable = variable_table.Variable_Table(sys.argv[1])
+
+	# checking I01
+	ULVList = undeclared_local_variable.Undeclared_Local_Variable()
+	print ULVList.Check(vtable)
 
 
 if __name__ == "__main__":
