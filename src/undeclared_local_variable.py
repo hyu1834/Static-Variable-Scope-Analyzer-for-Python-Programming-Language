@@ -17,7 +17,7 @@ class Undeclared_Local_Variable:
 		#   each entry is a list of variable currently "declared" in that level
 		self.__declared_var_list = {}
 
-	def Check(self, var_table):
+	def check(self, var_table):
 		warning_line_num = []
 		line_num = 1;
 		for code_line in var_table.variable_table:

@@ -12,3 +12,6 @@
 class Function_Parameter_Overridden:
 	def __init__(self):
 		pass
+
+	def check(self, vtable):
+		pass

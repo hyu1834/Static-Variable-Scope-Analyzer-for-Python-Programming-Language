@@ -12,3 +12,6 @@
 class Global_Local_Variable_Confusion:
 	def __init__(self):
 		pass
+		
+	def check(self, vtable):
+		pass

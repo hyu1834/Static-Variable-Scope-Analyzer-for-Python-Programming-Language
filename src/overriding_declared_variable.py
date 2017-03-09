@@ -12,3 +12,6 @@
 class Overridding_Devlared_Variable:
 	def __init__(self):
 		pass
+
+	def check(self, vtable):
+		pass
