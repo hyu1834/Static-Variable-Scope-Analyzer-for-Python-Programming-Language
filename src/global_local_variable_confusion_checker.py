@@ -31,6 +31,7 @@ class Global_Local_Variable_Confusion_Checker:
 					if variable[2] == 0 and not variable[0] in self.__declared_var_list:
 						# add it to the list
 						self.__declared_var_list.append(variable[0])
+					# else if the indention is > 0 and is already defined as global variable
 					elif variable[2] > 0 and variable[0] in self.__declared_var_list:
 						warning_line_num.append("%s: %s"%(line_num, variable[3]))
 
