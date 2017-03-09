@@ -3,6 +3,8 @@
 import os
 import sys
 
+i = 0
+
 def test1(arg1, arg2, arg3):
 	i = 10
 	for i in range(1, 10):

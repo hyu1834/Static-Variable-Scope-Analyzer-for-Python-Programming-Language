@@ -10,17 +10,17 @@
 import variable_table
 
 
-class Undeclared_Local_Variable_Checker(Object):
+class Undeclared_Local_Variable_Checker:
 
 	def __init__(self):
 		# __declared_var_list contains entries keyed by "level"
 		#   each entry is a list of variable currently "declared" in that level
 		self.__declared_var_list = {}
 
-	def check(self, var_table):
+	def check(self, vtable):
 		warning_line_num = []
-		line_num = 1;
-		for code_line in var_table.variable_table:
+		# line_num = 1;
+		for line_num, code_line in vtable.variable_table.items():
 			# get unique var-operation pair
 			var_list = set(code_line)
 			# sort the variable list so that read is processed before write
@@ -48,7 +48,7 @@ class Undeclared_Local_Variable_Checker(Object):
 							if variable[0] in self.__declared_var_list[i]:
 								found = True
 					if not found:
-						warning_line_num.append(line_num)
+						warning_line_num.append("%s: %s" %(line_num, variable[3]))
 
-			line_num += 1
+			# line_num += 1
 		return warning_line_num

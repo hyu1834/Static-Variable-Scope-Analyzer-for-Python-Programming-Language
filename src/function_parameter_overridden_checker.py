@@ -9,7 +9,7 @@
 #Local Libraries
 
 
-class Function_Parameter_Overridden_Checker(Object):
+class Function_Parameter_Overridden_Checker:
 	def __init__(self):
 		pass
 
