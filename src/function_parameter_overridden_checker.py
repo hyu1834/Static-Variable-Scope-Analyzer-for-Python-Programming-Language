@@ -23,6 +23,11 @@ class Function_Parameter_Overridden_Checker:
 			# get unique var-operation pair
 			var_list = set(code_line)
 
+			# clear all previous higher level variables
+			for key in self.__declared_var_list.keys():
+				if key > variable[2]:
+					self.__declared_var_list[key] = []
+
 			# for every cariable in such line
 			for variable in var_list:
 				# build table for with function argurment only
@@ -33,14 +38,14 @@ class Function_Parameter_Overridden_Checker:
 					elif not variable[0] in self.__declared_var_list[variable[2]]:
 						self.__declared_var_list[variable[2]].append(variable[0])
 
-
 				# we only care about write or assign operation
 				if any(variable[1] == operation for operation in [variable_table.Operation.WRITE,
 																  variable_table.Operation.ASSIGN
 																 ]):
-					pass
+					# if the variable name in the table, then warning
+					if variable[0] in self.__declared_var_list[variable[2]]:
+						warning_line_num.append("%s: %s" %(line_num, variable[3]))
 
 		return warning_line_num
 
 
-		

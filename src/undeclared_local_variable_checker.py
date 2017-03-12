@@ -27,7 +27,7 @@ class Undeclared_Local_Variable_Checker:
 			var_list = sorted(var_list, key=lambda var: var[1])
 
 			# clear all previous higher level variables
-			for key, level in self.__declared_var_list.iteritems():
+			for key in self.__declared_var_list.keys():
 				if key > variable[2]:
 					self.__declared_var_list[key] = []
 
