@@ -49,7 +49,7 @@ def main():
 
 	# Init checker
 	ulv_checker = undeclared_local_variable_checker.Undeclared_Local_Variable_Checker()
-	odv_checker = overriding_declared_variable_checker.Overridding_Devlared_Variable_Checker()
+	odv_checker = overriding_declared_variable_checker.Overridding_Declared_Variable_Checker()
 	glvc_checker = global_local_variable_confusion_checker.Global_Local_Variable_Confusion_Checker()
 	fpo_checker = function_parameter_overridden_checker.Function_Parameter_Overridden_Checker()
 

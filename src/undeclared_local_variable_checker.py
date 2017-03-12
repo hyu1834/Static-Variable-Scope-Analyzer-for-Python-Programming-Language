@@ -34,7 +34,10 @@ class Undeclared_Local_Variable_Checker:
 			for variable in var_list:
 
 				# if write operation, add var to declared list
-				if variable[1] == variable_table.Operation.ASSIGN or variable[1] == variable_table.Operation.WRITE:
+				if any(variable[1] == operation for operation in [variable_table.Operation.ASSIGN,
+																  variable_table.Operation.WRITE,
+																  variable_table.Operation.ARG
+																 ]):
 					# create container if not exist
 					if not self.__declared_var_list.has_key(variable[2]):
 						self.__declared_var_list[variable[2]] = []

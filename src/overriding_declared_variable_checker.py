@@ -10,7 +10,7 @@
 import variable_table
 
 
-class Overridding_Devlared_Variable_Checker:
+class Overridding_Declared_Variable_Checker:
 	def __init__(self):
 		# __declared_var_list contains entries keyed by "level"
 		#   each entry is a list of variable currently "declared" in that level
@@ -25,8 +25,10 @@ class Overridding_Devlared_Variable_Checker:
 
 			# for every cariable in such line
 			for variable in var_list:
-				# if variable is write
-				if variable[1] == variable_table.Operation.WRITE:
+				# if variable is write or arg
+				if any(variable[1] == operation for operation in [variable_table.Operation.WRITE,
+																  variable_table.Operation.ARG
+																 ]):
 					# if this is the first time seeing this variable
 					# add it into the list
 					if not variable[0] in self.__declared_var_list:

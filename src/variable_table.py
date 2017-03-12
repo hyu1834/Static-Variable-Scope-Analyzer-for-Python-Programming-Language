@@ -18,6 +18,7 @@ class Operation(Enum):
 	READ = 0
 	WRITE = 1
 	ASSIGN = 2
+	ARG = 3
 
 
 class Variable_Table:
@@ -80,7 +81,7 @@ class Variable_Table:
 			# break the function arguements string into list of variable names
 			variables = re.sub(r' ', '', str(matcher.groups()[3])).split(',') if(matcher.groups()[2]) else []
 			# construct line element by variables
-			self.variable_table[line_num] = [(variable_name, Operation.ASSIGN, indention, line) for variable_name in variables]
+			self.variable_table[line_num] = [(variable_name, Operation.ARG, indention, line) for variable_name in variables]
 			return True
 
 		return False

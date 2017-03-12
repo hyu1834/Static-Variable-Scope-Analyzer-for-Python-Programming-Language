@@ -26,7 +26,10 @@ class Global_Local_Variable_Confusion_Checker:
 			# for every cariable in such line
 			for variable in var_list:
 				# we only care about write or assign operation
-				if variable[1] == variable_table.Operation.WRITE or variable[1] == variable_table.Operation.ASSIGN:
+				if any(variable[1] == operation for operation in [variable_table.Operation.WRITE, 
+																  variable_table.Operation.ASSIGN,
+																  variable_table.Operation.ARG
+																 ]):
 					# if the indention is 0 = global variable
 					if variable[2] == 0 and not variable[0] in self.__declared_var_list:
 						# add it to the list
