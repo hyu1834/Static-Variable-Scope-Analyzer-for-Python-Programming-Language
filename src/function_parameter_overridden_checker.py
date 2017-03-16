@@ -42,9 +42,13 @@ class Function_Parameter_Overridden_Checker:
 				if any(variable[1] == operation for operation in [variable_table.Operation.WRITE,
 																  variable_table.Operation.ASSIGN
 																 ]):
-					# if the variable name in the table, then warning
-					if variable[0] in self.__declared_var_list[variable[2]]:
-						warning_line_num.append("%s: %s" %(line_num, variable[3]))
+					try:
+						# if the variable name in the table, then warning
+						if variable[0] in self.__declared_var_list[variable[2]]:
+							warning_line_num.append("%s: %s" %(line_num, variable[3]))
+					except KeyError:
+						# if the indention havent occur yet
+						pass
 
 		return warning_line_num
 
