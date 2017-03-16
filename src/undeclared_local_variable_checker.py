@@ -32,7 +32,7 @@ class Undeclared_Local_Variable_Checker:
 					self.__declared_var_list[key] = []
 
 			for variable in var_list:
-
+				# print(variable, self.__declared_var_list)
 				# if write operation, add var to declared list
 				if any(variable[1] == operation for operation in [variable_table.Operation.ASSIGN,
 																  variable_table.Operation.WRITE,

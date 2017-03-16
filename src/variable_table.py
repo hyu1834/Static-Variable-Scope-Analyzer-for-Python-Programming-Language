@@ -28,7 +28,7 @@ class Variable_Table:
 		self.parse_code(source_code_filepath)
 
 	def parse_arithmetic_expression(self, container, expression, indention, line_num, line):
-		matcher = re.match(r'[ \t]*([A-Za-z0-9]+([ \t]*[-\+*][ \t]*[A-Za-z0-9]+)*)$', expression)
+		matcher = re.match(r'[ \t]*([A-Za-z0-9]+([ \t]*[-\+*][ \t]*[A-Za-z0-9]+)*)([ \t]*#?.*)$', expression)
 		if(matcher):
 			# replace all operator to , so we can split easily
 			# for each item check if its variable name
@@ -42,7 +42,7 @@ class Variable_Table:
 		return container
 
 	def parse_boolean_expression(self, container, expression, indention, line_num, line):
-		matcher = re.match(r'[ \t]*([A-Za-z0-9]+([ \t]*[<=>!]+[ \t]*[A-Za-z0-9]+)*)$', expression)
+		matcher = re.match(r'[ \t]*([A-Za-z0-9]+([ \t]*[<=>!]+[ \t]*[A-Za-z0-9]+)*)([ \t]*#?.*)$', expression)
 		if(matcher):
 			expression = matcher.groups()[0]
 			# replace all comparsion operator to , so we can split easily
@@ -60,7 +60,7 @@ class Variable_Table:
 		return container
 
 	def parse_function_expression(self, container, expression, indention, line_num, line):
-		matcher = re.match(r'[ \t]*range\((.*),(.*)\)?$', expression)
+		matcher = re.match(r'[ \t]*range\((.*),(.*)\)?([ \t]*#?.*)$', expression)
 		if(matcher):
 			for i in range(0, 2):
 				try:
@@ -74,7 +74,7 @@ class Variable_Table:
 
 	def is_function_def(self, line_num, line, offset):
 		# if it is a function defination
-		matcher = re.match(r'([ \t]*)def ([A-Za-z0-9]+)(\(([A-Za-z0-9]*(,[ \t]*[A-Za-z0-9]+)*)\)):\n$', line)
+		matcher = re.match(r'([ \t]*)def ([A-Za-z0-9]+)(\(([A-Za-z0-9]*(,[ \t]*[A-Za-z0-9]+)*)\)):([ \t]*#?.*)\n$', line)
 		if(matcher):
 			indention = matcher.groups()[0].count('\t') + offset
 			function_name = matcher.groups()[1]
@@ -88,15 +88,15 @@ class Variable_Table:
 
 	def is_variable_assignment(self, line_num, line, offset):
 		# Variable assignment
-		matcher = re.match(r'([ \t]*)(.*)[ \t]*=[ \t]*(.*)\n?$', line)
+		matcher = re.match(r'([ \t]*)(.*)[ \t]*=[ \t]*(.*)([ \t]*#?.*)\n?$', line)
 		if(matcher):
 			indention = matcher.groups()[0].count('\t') + offset
 			variables = re.sub(r' ', '', matcher.groups()[1]).split(',')
-			elememt_list = [(variable_name, Operation.WRITE, indention, line) for variable_name in variables]
+			element_list = [(variable_name, Operation.WRITE, indention, line) for variable_name in variables]
 			# extract variables from expression
-			elememt_list = self.parse_arithmetic_expression(elememt_list, matcher.groups()[2], indention, line_num, line)
+			element_list = self.parse_arithmetic_expression(element_list, matcher.groups()[2], indention, line_num, line)
 			# add all variables into table
-			self.variable_table[line_num] = elememt_list
+			self.variable_table[line_num] = element_list
 
 			return True
 
@@ -104,39 +104,39 @@ class Variable_Table:
 
 	def is_print_statement(self, line_num, line, offset):
 		# Extract variable from print statement
-		matcher = re.match(r'([ \t]*)print[ \t]*\(?(.*)\)?\n?$', line)
+		matcher = re.match(r'([ \t]*)print[ \t]*\(?(.*)\)?([ \t]*#?.*)\n?$', line)
 		if(matcher):
 			indention = matcher.groups()[0].count('\t') + offset
-			elememt_list = self.parse_arithmetic_expression([], re.sub(r'\)', '', matcher.groups()[1]), indention, line_num, line)
+			element_list = self.parse_arithmetic_expression([], re.sub(r'\)', '', matcher.groups()[1]), indention, line_num, line)
 			# add all variables into table
-			self.variable_table[line_num] = elememt_list
+			self.variable_table[line_num] = element_list
 			return True
 
 		return False
 
 	def is_while_statement(self, line_num, line, offset):
-		matcher = re.match(r'([ \t]*)while[ \t\(]*(.*)[\)]*:\n$', line)
+		matcher = re.match(r'([ \t]*)while[ \t\(]*(.*)[\)]*:([ \t]*#?.*)\n$', line)
 		if(matcher):
 			indention = matcher.groups()[0].count('\t') + offset
-			elememt_list = self.parse_boolean_expression([], re.sub(r'\)', '', matcher.groups()[1]), indention, line_num, line)
+			element_list = self.parse_boolean_expression([], re.sub(r'\)', '', matcher.groups()[1]), indention, line_num, line)
 			# add all variables into table
-			self.variable_table[line_num] = elememt_list
+			self.variable_table[line_num] = element_list
 			return True
 
 		return False
 
 	def is_for_statement(self, line_num, line, offset):
-		matcher = re.match(r'([ \t]*)for[ \t\(]*(.*)[ \t]*in[ \t]*(.*)[\)]*:\n$', line)
+		matcher = re.match(r'([ \t]*)for[ \t\(]*(.*)[ \t]*in[ \t]*(.*)[\)]*:([ \t]*#?.*)\n$', line)
 		if(matcher):
 			indention = matcher.groups()[0].count('\t') + 1 + offset
 			# extract variable name
 			variables = re.sub(r' ', '', matcher.groups()[1]).split(',')
-			elememt_list = [(variable_name, Operation.ASSIGN, indention, line) for variable_name in variables]
-			elememt_list = self.parse_function_expression(elememt_list, re.sub(r'\)', '', matcher.groups()[2]), indention, 
+			element_list = [(variable_name, Operation.ASSIGN, indention, line) for variable_name in variables]
+			element_list = self.parse_function_expression(element_list, re.sub(r'\)', '', matcher.groups()[2]), indention, 
 														  line_num, line)
 
 			# add all variables into table
-			self.variable_table[line_num] = elememt_list
+			self.variable_table[line_num] = element_list
 
 			return True
 
@@ -144,18 +144,18 @@ class Variable_Table:
 
 	def is_if_statement(self, line_num, line, offset):
 		# Extract variables from if statement
-		matcher = re.match(r'([ \t]*)if[ \t\(]+(.*)\)?:\n$', line)
+		matcher = re.match(r'([ \t]*)if[ \t\(]+(.*)\)?:([ \t]*#?.*)\n$', line)
 		if(matcher):
 			indention = matcher.groups()[0].count('\t') + offset
-			elememt_list = self.parse_boolean_expression([], re.sub(r'\)', '', matcher.groups()[1]), indention, line_num, line)
+			element_list = self.parse_boolean_expression([], re.sub(r'\)', '', matcher.groups()[1]), indention, line_num, line)
 			# add all variables into table
-			self.variable_table[line_num] = elememt_list
+			self.variable_table[line_num] = element_list
 			return True
 
 		return False
 
 	def is_with_statement(self, line_num, line, offset):
-		matcher = re.match(r'([ \t]*)with[ \t]*(.*) as[ \t]*([A-Za-z0-9]+):\n$', line)
+		matcher = re.match(r'([ \t]*)with[ \t]*(.*) as[ \t]*([A-Za-z0-9]+):([ \t]*#?.*)\n$', line)
 		if(matcher):
 			indention = matcher.groups()[0].count('\t')
 
@@ -195,7 +195,7 @@ class Variable_Table:
 				  ):
 					pass
 				else:
-					print(repr(line))
+					print("line: \"%s\" not supported"%repr(line))
 
 				# pre-count tabs
 
