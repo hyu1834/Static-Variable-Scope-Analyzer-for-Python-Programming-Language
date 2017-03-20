@@ -9,10 +9,10 @@ import re
 from enum import Enum
 
 #Local Libraries
-import undeclared_local_variable
-import overriding_declared_variable
-import global_local_variable_confusion
-import function_parameter_overridden
+import undeclared_local_variable_checker
+import overriding_declared_variable_checker
+import global_local_variable_confusion_checker
+import function_parameter_overridden_checker
 
 class Operation(Enum):
 	READ = 0
