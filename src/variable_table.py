@@ -76,7 +76,10 @@ class Variable_Table:
 		# if it is a function defination
 		matcher = re.match(r'([ \t]*)def ([A-Za-z0-9]+)(\(([A-Za-z0-9]*(,[ \t]*[A-Za-z0-9]+)*)\)):([ \t]*#?.*)\n$', line)
 		if(matcher):
-			indention = matcher.groups()[0].count('\t') + offset + 1
+			if ' ' in matcher.groups()[0]:
+				indention = (matcher.groups()[0].count('') / 4) + offset + 1
+			else:
+				indention = matcher.groups()[0].count('\t') + offset + 1
 			function_name = matcher.groups()[1]
 			# break the function arguements string into list of variable names
 			variables = re.sub(r' ', '', str(matcher.groups()[3])).split(',') if(matcher.groups()[2]) else []
@@ -90,7 +93,10 @@ class Variable_Table:
 		# Variable assignment
 		matcher = re.match(r'([ \t]*)(.*)[ \t]*=[ \t]*(.*)([ \t]*#?.*)\n?$', line)
 		if(matcher):
-			indention = matcher.groups()[0].count('\t') + offset
+			if ' ' in matcher.groups()[0]:
+				indention = (matcher.groups()[0].count('') / 4) + offset
+			else:
+				indention = matcher.groups()[0].count('\t') + offset
 			variables = re.sub(r' ', '', matcher.groups()[1]).split(',')
 			element_list = [(variable_name, Operation.WRITE, indention, line) for variable_name in variables]
 			# extract variables from expression
@@ -106,7 +112,10 @@ class Variable_Table:
 		# Extract variable from print statement
 		matcher = re.match(r'([ \t]*)print[ \t]*\(?(.*)\)?([ \t]*#?.*)\n?$', line)
 		if(matcher):
-			indention = matcher.groups()[0].count('\t') + offset
+			if ' ' in matcher.groups()[0]:
+				indention = (matcher.groups()[0].count('') / 4) + offset
+			else:
+				indention = matcher.groups()[0].count('\t') + offset
 			element_list = self.parse_arithmetic_expression([], re.sub(r'\)', '', matcher.groups()[1]), indention, line_num, line)
 			# add all variables into table
 			self.variable_table[line_num] = element_list
@@ -117,7 +126,10 @@ class Variable_Table:
 	def is_while_statement(self, line_num, line, offset):
 		matcher = re.match(r'([ \t]*)while[ \t\(]*(.*)[\)]*:([ \t]*#?.*)\n$', line)
 		if(matcher):
-			indention = matcher.groups()[0].count('\t') + offset
+			if ' ' in matcher.groups()[0]:
+				indention = (matcher.groups()[0].count('') / 4) + offset
+			else:
+				indention = matcher.groups()[0].count('\t') + offset
 			element_list = self.parse_boolean_expression([], re.sub(r'\)', '', matcher.groups()[1]), indention, line_num, line)
 			# add all variables into table
 			self.variable_table[line_num] = element_list
@@ -128,7 +140,10 @@ class Variable_Table:
 	def is_for_statement(self, line_num, line, offset):
 		matcher = re.match(r'([ \t]*)for[ \t\(]*(.*)[ \t]*in[ \t]*(.*)[\)]*:([ \t]*#?.*)\n$', line)
 		if(matcher):
-			indention = matcher.groups()[0].count('\t') + 1 + offset
+			if ' ' in matcher.groups()[0]:
+				indention = (matcher.groups()[0].count('') / 4) + offset + 1
+			else:
+				indention = matcher.groups()[0].count('\t') + 1 + offset
 			# extract variable name
 			variables = re.sub(r' ', '', matcher.groups()[1]).split(',')
 			element_list = [(variable_name, Operation.ASSIGN, indention, line) for variable_name in variables]
@@ -146,7 +161,10 @@ class Variable_Table:
 		# Extract variables from if statement
 		matcher = re.match(r'([ \t]*)if[ \t\(]+(.*)\)?:([ \t]*#?.*)\n$', line)
 		if(matcher):
-			indention = matcher.groups()[0].count('\t') + offset
+			if ' ' in matcher.groups()[0]:
+				indention = (matcher.groups()[0].count('') / 4) + offset
+			else:
+				indention = matcher.groups()[0].count('\t') + offset
 			element_list = self.parse_boolean_expression([], re.sub(r'\)', '', matcher.groups()[1]), indention, line_num, line)
 			# add all variables into table
 			self.variable_table[line_num] = element_list
@@ -157,7 +175,10 @@ class Variable_Table:
 	def is_with_statement(self, line_num, line, offset):
 		matcher = re.match(r'([ \t]*)with[ \t]*(.*) as[ \t]*([A-Za-z0-9]+):([ \t]*#?.*)\n$', line)
 		if(matcher):
-			indention = matcher.groups()[0].count('\t')
+			if ' ' in matcher.groups()[0]:
+				indention = (matcher.groups()[0].count('') / 4) + offset
+			else:
+				indention = matcher.groups()[0].count('\t')
 
 			return True
 
