@@ -172,6 +172,38 @@ class Variable_Table:
 
 		return False
 
+	def is_return_statement(self, line_num, line, offset):
+		matcher = re.match(r'([ \t]*)return(.*)$', line)
+		if(matcher):
+			# compute indention
+			if ' ' in matcher.groups()[0]:
+				indention = (matcher.groups()[0].count('') / 4) + offset
+			else:
+				indention = matcher.groups()[0].count('\t')
+
+			variables = re.sub(r'[ \t]', '', matcher.groups()[1]).split(',')
+			element_list = [(variable_name, Operation.READ, indention, line) for variable_name in variables]
+
+			# add all variables into table
+			self.variable_table[line_num] = element_list
+			return True
+
+		return False
+
+	def is_non_variable_statement(self, line):
+		for keyword in ['return', 'break', 'else']:
+			matcher = re.match(r'([ \t]*)%s.*$'%keyword, line)
+			if(matcher):
+				# compute indention
+				if ' ' in matcher.groups()[0]:
+					indention = (matcher.groups()[0].count('') / 4) + offset
+				else:
+					indention = matcher.groups()[0].count('\t')
+
+				return True
+
+		return False
+
 	def is_with_statement(self, line_num, line, offset):
 		matcher = re.match(r'([ \t]*)with[ \t]*(.*) as[ \t]*([A-Za-z0-9]+):([ \t]*#?.*)\n$', line)
 		if(matcher):
@@ -210,10 +242,12 @@ class Variable_Table:
 
 				if self.is_if_statement(line_num, line, indention_offset):
 					indention_offset -= 1
-				elif(self.is_function_def(line_num, line, indention_offset) or self.is_print_statement(line_num, line, indention_offset) or
-				   self.is_for_statement(line_num, line, indention_offset) or self.is_while_statement(line_num, line, indention_offset) or
-				   self.is_variable_assignment(line_num, line, indention_offset)
-				  ):
+				elif(self.is_non_variable_statement(line) or
+					 self.is_function_def(line_num, line, indention_offset) or self.is_print_statement(line_num, line, indention_offset) or
+					 self.is_for_statement(line_num, line, indention_offset) or self.is_while_statement(line_num, line, indention_offset) or
+					 self.is_variable_assignment(line_num, line, indention_offset) or self.is_return_statement(line_num, line, indention_offset)
+					 
+					):
 					pass
 				else:
 					print("line: \"%s\" not supported"%repr(line))
