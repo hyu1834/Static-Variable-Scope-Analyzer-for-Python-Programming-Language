@@ -76,7 +76,7 @@ class Variable_Table:
 		# if it is a function defination
 		matcher = re.match(r'([ \t]*)def ([A-Za-z0-9]+)(\(([A-Za-z0-9]*(,[ \t]*[A-Za-z0-9]+)*)\)):([ \t]*#?.*)\n$', line)
 		if(matcher):
-			indention = matcher.groups()[0].count('\t') + offset
+			indention = matcher.groups()[0].count('\t') + offset + 1
 			function_name = matcher.groups()[1]
 			# break the function arguements string into list of variable names
 			variables = re.sub(r' ', '', str(matcher.groups()[3])).split(',') if(matcher.groups()[2]) else []
